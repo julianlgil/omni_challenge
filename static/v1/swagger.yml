@@ -1,0 +1,655 @@
+openapi: 3.0.0
+info:
+    title: Omni Ecomerce
+    version: 0.0.1
+    description: This is the endpoints documentation for omni_challenge ecommerce® senior backend test
+servers:
+    -
+        url: /api/v1/
+paths:
+    /healthcheck/:
+        get:
+            tags:
+                - API Status
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/HealthCheckSchema'
+                    description: Server online
+            summary: Check server status
+            description: Check server status
+    /auth/:
+        post:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AccessTokenSchema'
+                required: true
+            tags:
+                - Auth
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TokenResponseSchema'
+                    description: Valid username and password
+            summary: Get user access token
+        delete:
+            tags:
+                - Auth
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TokenResponseSchema'
+                    description: Valid username and password
+            summary: Remove user access token
+    /orders/:
+        get:
+            tags:
+                - Orders
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get orders list of auth user
+        post:
+            requestBody:
+                description: ''
+                required: false
+            tags:
+                - Orders
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: {}
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Create user order
+    '/orders/{order_id}/':
+        get:
+            tags:
+                - Orders
+            parameters:
+                -
+                    style: simple
+                    name: order_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get order detail
+        put:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateOrderSchema'
+                required: true
+            tags:
+                - Orders
+            parameters:
+                -
+                    style: simple
+                    name: order_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: {}
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Update order
+        delete:
+            tags:
+                - Orders
+            parameters:
+                -
+                    style: simple
+                    name: order_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeletedSchema'
+                    description: Deleted
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFoundSchema'
+                    description: Not Found
+            summary: Delete order
+    /products/:
+        get:
+            tags:
+                - Products
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get product list
+        post:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateProductSchema'
+                required: true
+            tags:
+                - Products
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: {}
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Create product
+    '/products/{product_id}/':
+        get:
+            tags:
+                - Products
+            parameters:
+                -
+                    style: simple
+                    name: product_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ProductDetailResponseSchema'
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get product detail
+        put:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateProductSchema'
+                required: true
+            tags:
+                - Products
+            parameters:
+                -
+                    style: simple
+                    name: product_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: {}
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Create product
+        post:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateProductUnitsSchema'
+                required: true
+            tags:
+                - Products
+            parameters:
+                -
+                    style: simple
+                    name: product_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: {}
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Update available units
+        delete:
+            tags:
+                - Products
+            parameters:
+                -
+                    style: simple
+                    name: product_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeletedSchema'
+                    description: Deleted
+                '401':
+                    description: Unauthorized
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFoundSchema'
+                    description: Not Found
+            summary: Delete product
+    /payments/:
+        get:
+            tags:
+                - Payments
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get payments list of auth user
+        post:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreatePaymentSchema'
+                required: false
+            tags:
+                - Orders
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: {}
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Create user order
+    '/payments/{payment_id}/':
+        get:
+            tags:
+                - Payments
+            parameters:
+                -
+                    style: simple
+                    name: payment_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            example:
+                                count: 9
+                                next: 'http://localhost:8000/api/v1/tasks/tags/?limit=5&offset=5'
+                                results:
+                                    -
+                                        id: a2ec10e4-ec99-4a31-9cb6-26032504222e
+                                        name: QA
+                                        created_at: '2021-04-14T23:28:25.658407Z'
+                                        updated_at: '2021-04-14T23:28:25.658407Z'
+                                    -
+                                        id: 3c62c93b-f04d-4596-b8b9-f34270a9425a
+                                        name: BACKEND
+                                        created_at: '2021-04-14T23:28:24.879436Z'
+                                        updated_at: '2021-04-14T23:28:24.879436Z'
+                                    -
+                                        id: b054dca1-3674-4b8c-bb65-a31ef9208855
+                                        name: DEVOPS
+                                        created_at: '2021-04-14T23:28:24.266031Z'
+                                        updated_at: '2021-04-14T23:28:24.266031Z'
+                                    -
+                                        id: f149a2d8-da80-4dc3-8f3b-9a62a2f4894e
+                                        name: PRODUCT
+                                        created_at: '2021-04-14T23:28:23.696257Z'
+                                        updated_at: '2021-04-14T23:28:23.696257Z'
+                                    -
+                                        id: 750bab32-10dc-4caa-8af4-002b229d07f1
+                                        name: ORIGINATION
+                                        created_at: '2021-04-14T23:28:23.182418Z'
+                                        updated_at: '2021-04-14T23:28:23.182418Z'
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get order detail
+        put:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateOrderSchema'
+                required: true
+            tags:
+                - Payments
+            parameters:
+                -
+                    style: simple
+                    name: payment_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json: {}
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: {}
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Update order
+        delete:
+            tags:
+                - Payments
+            parameters:
+                -
+                    style: simple
+                    name: payment_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeletedSchema'
+                    description: Deleted
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFoundSchema'
+                    description: Not Found
+            summary: Delete order
+components:
+    schemas:
+        NotFoundSchema:
+            title: Not Found
+            type: object
+            properties:
+                detail:
+                    type: string
+            example:
+                detail:
+                    - Not found.
+        UnauthorizedResponseSchema:
+            title: Unauthorized Response
+            type: object
+            properties:
+                detail:
+                    type: string
+            example:
+                detail: Authentication credentials were not provided.
+        HealthCheckSchema:
+            title: Health Check
+            required:
+                - message
+            type: object
+            properties:
+                message:
+                    type: string
+            example:
+                message: It's Working
+        AccessTokenSchema:
+            title: Access Token
+            required:
+                - username
+                - password
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+            example:
+                username: admin
+                password: admin
+        TokenResponseSchema:
+            title: Token Response
+            type: object
+            properties:
+                token:
+                    type: string
+            example:
+                token: 3888fb7abeeae8671120ce854214be2081011fc0
+        DeletedSchema:
+            title: Deleted
+            type: object
+            properties:
+                status:
+                    type: string
+            example:
+                status: deleted
+        CreateProductSchema:
+            title: Root Type for CreateProductSchema
+            description: ''
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                unit_price:
+                    format: int32
+                    type: integer
+            example:
+                name: jean
+                description: blue jean
+                unit_price: 20000
+        UpdateProductSchema:
+            title: Root Type for UpdateProductSchema
+            description: ''
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                unit_price:
+                    format: int32
+                    type: integer
+            example:
+                name: camisa
+                description: camisa azul
+                unit_price: 10000
+        UpdateProductUnitsSchema:
+            title: Root Type for UpdateProductUnitsSchema
+            description: ''
+            type: object
+            properties:
+                units:
+                    format: int32
+                    type: integer
+            example:
+                units: 50
+        ProductToOrderSchema:
+            title: Root Type for ProductToOrderSchema
+            description: ''
+            type: object
+            properties:
+                product_id:
+                    type: string
+                units:
+                    format: int32
+                    type: integer
+            example:
+                product_id: ñlalkds-ñsklldkl-ksñf
+                units: 100
+        UpdateOrderSchema:
+            title: Root Type for UpdateOrderSchema
+            description: ''
+            type: object
+            properties:
+                products:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ProductToOrderSchema'
+            example:
+                products:
+                    -
+                        product_id: uuid
+                        units: 112
+        ProductDetailResponseSchema:
+            title: Root Type for ProductDetailResponseSchema
+            description: ''
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                unit_price:
+                    format: int32
+                    type: integer
+                units:
+                    type: string
+                created_at:
+                    type: string
+                updated_at:
+                    type: string
+            example:
+                id: 3de8bf36-146b-4e74-a9a2-d7c8adafac9c
+                name: tenis
+                description: tenis f10
+                unit_price: 10000
+                units: '0'
+                created_at: '2021-06-10T19:47:55.374703Z'
+                updated_at: '2021-06-10T19:47:55.374750Z'
+        CreatePaymentSchema:
+            title: Root Type for CreatePaymentSchema
+            description: ''
+            type: object
+            properties:
+                order_id:
+                    type: string
+                amount:
+                    format: int32
+                    type: integer
+            example:
+                order_id: uuid
+                amount: 10000
+    securitySchemes:
+        httpBearer:
+            scheme: bearer
+            type: http
+security:
+    -
+        httpBearer: []
+tags:
+    -
+        name: API Status
+    -
+        name: Auth
+    -
+        name: Products
+    -
+        name: Orders
+    -
+        name: Payments
