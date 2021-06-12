@@ -1,8 +1,11 @@
+from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from common.models import BaseModel
 from products.models import Products
-from django.contrib.auth.models import User
-from .constants import ORDER_STATUS
+from .constants import ORDER_STATUS, PENDING_SHIPPING
 
 
 class Orders(BaseModel):
@@ -54,3 +57,14 @@ class OrderProductDetail(BaseModel):
     class Meta:
         db_table = "orders_products_detail"
         unique_together = (("order", "product"),)
+
+
+@receiver(post_save, sender=Orders)
+def update_product_post_save_order(sender, **kwargs):
+    order = kwargs["instance"]
+    if order.status == PENDING_SHIPPING:
+        products_details = order.product_detail.all()
+        for product_detail in products_details:
+            product_available = product_detail.product.available_units
+            product_available.units -= product_detail.units
+            product_available.save()

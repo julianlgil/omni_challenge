@@ -85,5 +85,7 @@ class OrderAPIView(mixins.RetrieveModelMixin,
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"status": "deleted"}, status=status.HTTP_200_OK)
+        if instance.status == OPEN:
+            self.perform_destroy(instance)
+            return Response({"status": "deleted"}, status=status.HTTP_200_OK)
+        return Response({"status": "order can not be deleted, because it's not OPEN"}, status=status.HTTP_403_FORBIDDEN)

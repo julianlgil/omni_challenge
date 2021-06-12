@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import PaymentsAPIView, PaymentAPIView
 
-app_name = "orders"
+app_name = "payments"
 
 urlpatterns = [
     path('', PaymentsAPIView.as_view(), name='payments_api'),

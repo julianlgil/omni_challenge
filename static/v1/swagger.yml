@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
     title: Omni Ecomerce
     version: 0.0.1
-    description: This is the endpoints documentation for omni_challenge ecommerce® senior backend test
+    description: This is the endpoints documentation for omni_challenge ecommerce® backend test
 servers:
     -
         url: /api/v1/
@@ -340,7 +340,7 @@ paths:
                             $ref: '#/components/schemas/CreatePaymentSchema'
                 required: false
             tags:
-                - Orders
+                - Payments
             responses:
                 '200':
                     content:
