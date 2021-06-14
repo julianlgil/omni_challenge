@@ -43,7 +43,7 @@ class Orders(BaseModel):
             return order_product_detail
         return None
 
-    def update_order(self, total_order_price, balance):
+    def update_order_amounts(self, total_order_price, balance):
         self.total_order_price = total_order_price
         self.balance = balance
         self.save()

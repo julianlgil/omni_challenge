@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .constants import OPEN
 from .models import Orders
-from .serializers import OrdersSerializer, OrderProductDetailsSerializer, OrderProductsListSerializer
+from .serializers import OrdersSerializer, OrderProductsListSerializer
 
 
 class OrdersAPIView(mixins.ListModelMixin,
@@ -36,9 +36,9 @@ class OrdersAPIView(mixins.ListModelMixin,
 
 
 class OrderAPIView(mixins.RetrieveModelMixin,
-                    mixins.CreateModelMixin,
-                    mixins.DestroyModelMixin,
-                    generics.GenericAPIView):
+                   mixins.CreateModelMixin,
+                   mixins.DestroyModelMixin,
+                   generics.GenericAPIView):
     serializer_class = OrdersSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -49,17 +49,6 @@ class OrderAPIView(mixins.RetrieveModelMixin,
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        serializer_data = {
-            "user": request.user.id,
-            "total_order_price": 0,
-            "status": OPEN
-        }
-        order_serializer = OrdersSerializer(data=serializer_data)
-        order_serializer.is_valid(raise_exception=True)
-        order_serializer.save()
-        return Response(order_serializer.data, status=status.HTTP_201_CREATED)
-
     def put(self, request, *args, **kwargs):
         order = self.get_object()
         product_list_serializer = OrderProductsListSerializer(data=request.data)
@@ -67,13 +56,13 @@ class OrderAPIView(mixins.RetrieveModelMixin,
         products_unavailable = []
         total_order_price = 0
         for product_to_order in product_list_serializer.validated_data["products"]:
-            order_product_detail = order.save_order_product_detail(product_to_order)
+            order_product_detail = order.save_order_product_detail(order_product_detail=product_to_order)
             if order_product_detail:
                 total_order_price += order_product_detail.total_price
             else:
                 products_unavailable.append(product_to_order["product_id"])
 
-        order.update_order(total_order_price=total_order_price, balance=total_order_price)
+        order.update_order_amounts(total_order_price=total_order_price, balance=total_order_price)
         status_response = status.HTTP_200_OK
         if products_unavailable:
             status_response = status.HTTP_206_PARTIAL_CONTENT

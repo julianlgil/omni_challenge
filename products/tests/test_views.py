@@ -105,3 +105,28 @@ class TestViews(TestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}"
         )
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_change_name_to_product(self):
+        old_name = self.product.name
+        product_data = {
+            "name": "new_name",
+            "description": "this product change"
+        }
+        response = self.client.put(
+            path=self.PRODUCTS_DETAIL_API_URL,
+            data=product_data,
+            content_type='application/json',
+            HTTP_AUTHORIZATION=f"Bearer {self.token}"
+        )
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertIn("name", response.data)
+        self.assertNotEqual(response.data.get("name"), old_name)
+
+
+    def test_delete_product(self):
+        response = self.client.delete(
+            path=self.PRODUCTS_DETAIL_API_URL,
+            content_type='application/json',
+            HTTP_AUTHORIZATION=f"Bearer {self.token}"
+        )
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
