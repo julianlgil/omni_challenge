@@ -9,7 +9,7 @@ from .constants import ORDER_STATUS, PENDING_SHIPPING
 
 
 class Orders(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="orders")
     total_order_price = models.FloatField()
     balance = models.FloatField(default=0)
     status = models.CharField(max_length=30, choices=ORDER_STATUS)
@@ -23,6 +23,7 @@ class Orders(BaseModel):
             return product_detail
         except Exception:
             return None
+
 
     def save_order_product_detail(self, order_product_detail):
         units_to_order = order_product_detail["units"]

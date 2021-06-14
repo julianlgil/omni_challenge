@@ -350,7 +350,7 @@ paths:
                     content:
                         application/json: {}
                     description: 'Bad Request, username not exists or invalid password'
-            summary: Create user order
+            summary: Create user payment
     '/payments/{payment_id}/':
         get:
             tags:
@@ -367,36 +367,7 @@ paths:
             responses:
                 '200':
                     content:
-                        application/json:
-                            example:
-                                count: 9
-                                next: 'http://localhost:8000/api/v1/tasks/tags/?limit=5&offset=5'
-                                results:
-                                    -
-                                        id: a2ec10e4-ec99-4a31-9cb6-26032504222e
-                                        name: QA
-                                        created_at: '2021-04-14T23:28:25.658407Z'
-                                        updated_at: '2021-04-14T23:28:25.658407Z'
-                                    -
-                                        id: 3c62c93b-f04d-4596-b8b9-f34270a9425a
-                                        name: BACKEND
-                                        created_at: '2021-04-14T23:28:24.879436Z'
-                                        updated_at: '2021-04-14T23:28:24.879436Z'
-                                    -
-                                        id: b054dca1-3674-4b8c-bb65-a31ef9208855
-                                        name: DEVOPS
-                                        created_at: '2021-04-14T23:28:24.266031Z'
-                                        updated_at: '2021-04-14T23:28:24.266031Z'
-                                    -
-                                        id: f149a2d8-da80-4dc3-8f3b-9a62a2f4894e
-                                        name: PRODUCT
-                                        created_at: '2021-04-14T23:28:23.696257Z'
-                                        updated_at: '2021-04-14T23:28:23.696257Z'
-                                    -
-                                        id: 750bab32-10dc-4caa-8af4-002b229d07f1
-                                        name: ORIGINATION
-                                        created_at: '2021-04-14T23:28:23.182418Z'
-                                        updated_at: '2021-04-14T23:28:23.182418Z'
+                        application/json: {}
                     description: OK
                 '401':
                     content:
@@ -404,7 +375,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/UnauthorizedResponseSchema'
                     description: Unauthorized
-            summary: Get order detail
+            summary: Get payment detail
         put:
             requestBody:
                 description: ''
@@ -433,7 +404,7 @@ paths:
                     content:
                         application/json: {}
                     description: 'Bad Request, username not exists or invalid password'
-            summary: Update order
+            summary: Update payment
         delete:
             tags:
                 - Payments
@@ -465,7 +436,128 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/NotFoundSchema'
                     description: Not Found
-            summary: Delete order
+            summary: Delete payment
+    /shipments/:
+        get:
+            tags:
+                - Shipments
+            responses:
+                '200':
+                    content:
+                        application/json: { }
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get shipments list of auth user
+        post:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreatePaymentSchema'
+                required: false
+            tags:
+                - Shipments
+            responses:
+                '200':
+                    content:
+                        application/json: { }
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: { }
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Create user shipment
+    '/shipments/{shipment_id}/':
+        get:
+            tags:
+                - Shipments
+            parameters:
+                - style: simple
+                  name: payment_id
+                  description: ''
+                  schema:
+                      type: string
+                  in: path
+                  required: true
+            responses:
+                '200':
+                    content:
+                        application/json: { }
+                    description: OK
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+            summary: Get shipment detail
+        put:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateOrderSchema'
+                required: true
+            tags:
+                - Shipments
+            parameters:
+                - style: simple
+                  name: shipment_id
+                  description: ''
+                  schema:
+                      type: string
+                  in: path
+                  required: true
+            responses:
+                '200':
+                    content:
+                        application/json: { }
+                    description: Valid username and password
+                '400':
+                    content:
+                        application/json: { }
+                    description: 'Bad Request, username not exists or invalid password'
+            summary: Update shipment
+        delete:
+            tags:
+                - Shipments
+            parameters:
+                - style: simple
+                  name: shipment_id
+                  description: ''
+                  schema:
+                      type: string
+                  in: path
+                  required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeletedSchema'
+                    description: Deleted
+                '401':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedResponseSchema'
+                    description: Unauthorized
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFoundSchema'
+                    description: Not Found
+            summary: Delete shipment
+
+
 components:
     schemas:
         NotFoundSchema:

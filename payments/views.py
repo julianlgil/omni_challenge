@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .constants import PENDING
 from .models import Orders, Payment
-from .serializers import PaymentSerializer
+from .serializers import PaymentSerializer, CreatePaymentRequestSerializer
 
 
 class PaymentsAPIView(mixins.ListModelMixin,
@@ -24,28 +24,30 @@ class PaymentsAPIView(mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        order_id = request.data["order_id"]
-        amount = request.data["amount"]
+        serializer_request = CreatePaymentRequestSerializer(data=request.data)
+        serializer_request.is_valid(raise_exception=True)
+        order_id = serializer_request.validated_data["order_id"]
+        amount = serializer_request.validated_data["amount"]
         order = Orders.objects.get(id=order_id)
         if amount > order.balance:
             return Response({"error": "monto invalido"}, status=status.HTTP_400_BAD_REQUEST)
         serializer_data = {
             "user": request.user.id,
-            "amount": request.data["amount"],
+            "amount": amount,
             "status": PENDING
         }
         payment_serializer = PaymentSerializer(data=serializer_data)
         payment_serializer.is_valid(raise_exception=True)
         payment_serializer.save()
         payment = payment_serializer.instance
-        payment.set_payment_detail(order)
+        payment.set_payment_detail(order=order, amount=amount)
         return Response(payment_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class PaymentAPIView(mixins.RetrieveModelMixin,
-                      mixins.DestroyModelMixin,
-                      mixins.UpdateModelMixin,
-                      generics.GenericAPIView):
+                     mixins.DestroyModelMixin,
+                     mixins.UpdateModelMixin,
+                     generics.GenericAPIView):
     serializer_class = PaymentSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -65,4 +67,4 @@ class PaymentAPIView(mixins.RetrieveModelMixin,
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({"status": "deleted"}, status=status.HTTP_200_OK)
+        return Response(data={"status": "deleted"}, status=status.HTTP_200_OK)

@@ -10,20 +10,21 @@ from .constants import PAYMENT_STATUS, PENDING, SUCCESSFUL
 
 
 class Payment(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True, related_name="payments")
     amount = models.FloatField()
     status = models.CharField(max_length=30, choices=PAYMENT_STATUS)
 
     class Meta:
         db_table = "payments"
 
-    def set_payment_detail(self, order):
-        return PaymentDetail.objects.create(payment=self, order=order)
+    def set_payment_detail(self, order, amount):
+        return PaymentDetail.objects.create(payment=self, order=order, amount=amount)
 
 
 class PaymentDetail(BaseModel):
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name="payment_detail")
-    order = models.ForeignKey(Orders, on_delete=models.PROTECT)
+    order = models.ForeignKey(Orders, on_delete=models.PROTECT, related_name="payment_detail")
+    amount = models.FloatField()
 
     class Meta:
         db_table = "payment_details"
@@ -40,7 +41,13 @@ def update_order_post_save(sender, **kwargs):
             order.balance -= payment.amount
             order.status = PENDING_PAYMENT
         if payment.status == SUCCESSFUL and order.balance == 0:
-            order.status = PENDING_SHIPPING
+            count = 0
+            payments = order.payment_detail.all()
+            for payment_by_order in payments:
+                if payment_by_order.payment.status == SUCCESSFUL:
+                    count += 1
+            if count == len(payments):
+                order.status = PENDING_SHIPPING
         else:
             order.status = PENDING_PAYMENT
         order.save()
