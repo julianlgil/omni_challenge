@@ -6,8 +6,8 @@ from shipments.models import Shipments
 class ShipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipments
-        fields = ("id", "order", "address", "cellphone_number", "status", "created_at", "updated_at")
-        read_only = ("id", "order", "created_at", "updated_at")
+        fields = ("id", "user", "order", "address", "cellphone_number", "status", "created_at", "updated_at")
+        read_only = ("id", "user", "order", "created_at", "updated_at")
 
 
 class CreateShipmentRequestSerializer(serializers.Serializer):

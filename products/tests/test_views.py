@@ -122,7 +122,6 @@ class TestViews(TestCase):
         self.assertIn("name", response.data)
         self.assertNotEqual(response.data.get("name"), old_name)
 
-
     def test_delete_product(self):
         response = self.client.delete(
             path=self.PRODUCTS_DETAIL_API_URL,

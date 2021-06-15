@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -9,8 +10,9 @@ from .constants import SHIPMENT_STATUS, DELIVERED
 
 
 class Shipments(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="shipments")
     address = models.CharField(max_length=100)
-    cellphone_number = models.CharField(max_length=10)
+    cellphone_number = models.CharField(max_length=20)
     order = models.ForeignKey(to=Orders, on_delete=models.CASCADE, related_name="shipments")
     status = models.CharField(max_length=30, choices=SHIPMENT_STATUS)
 

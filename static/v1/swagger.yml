@@ -382,7 +382,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateOrderSchema'
+                            $ref: '#/components/schemas/UpdatePaymentSchema'
                 required: true
             tags:
                 - Payments
@@ -444,7 +444,7 @@ paths:
             responses:
                 '200':
                     content:
-                        application/json: { }
+                        application/json: {}
                     description: OK
                 '401':
                     content:
@@ -459,18 +459,18 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreatePaymentSchema'
+                            $ref: '#/components/schemas/CreateShipmentSchema'
                 required: false
             tags:
                 - Shipments
             responses:
                 '200':
                     content:
-                        application/json: { }
+                        application/json: {}
                     description: Valid username and password
                 '400':
                     content:
-                        application/json: { }
+                        application/json: {}
                     description: 'Bad Request, username not exists or invalid password'
             summary: Create user shipment
     '/shipments/{shipment_id}/':
@@ -478,17 +478,16 @@ paths:
             tags:
                 - Shipments
             parameters:
-                - style: simple
-                  name: payment_id
-                  description: ''
-                  schema:
-                      type: string
-                  in: path
-                  required: true
+                -
+                    name: shipment_id
+                    schema:
+                        type: string
+                    in: path
+                    required: true
             responses:
                 '200':
                     content:
-                        application/json: { }
+                        application/json: {}
                     description: OK
                 '401':
                     content:
@@ -503,39 +502,41 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateOrderSchema'
+                            $ref: '#/components/schemas/UpdateShipmentSchema'
                 required: true
             tags:
                 - Shipments
             parameters:
-                - style: simple
-                  name: shipment_id
-                  description: ''
-                  schema:
-                      type: string
-                  in: path
-                  required: true
+                -
+                    style: simple
+                    name: shipment_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
             responses:
                 '200':
                     content:
-                        application/json: { }
+                        application/json: {}
                     description: Valid username and password
                 '400':
                     content:
-                        application/json: { }
+                        application/json: {}
                     description: 'Bad Request, username not exists or invalid password'
             summary: Update shipment
         delete:
             tags:
                 - Shipments
             parameters:
-                - style: simple
-                  name: shipment_id
-                  description: ''
-                  schema:
-                      type: string
-                  in: path
-                  required: true
+                -
+                    style: simple
+                    name: shipment_id
+                    description: ''
+                    schema:
+                        type: string
+                    in: path
+                    required: true
             responses:
                 '200':
                     content:
@@ -556,8 +557,6 @@ paths:
                                 $ref: '#/components/schemas/NotFoundSchema'
                     description: Not Found
             summary: Delete shipment
-
-
 components:
     schemas:
         NotFoundSchema:
@@ -727,6 +726,57 @@ components:
             example:
                 order_id: uuid
                 amount: 10000
+        CreateShipmentSchema:
+            title: Root Type for CreateShipmentSchema
+            description: ''
+            type: object
+            properties:
+                order_id:
+                    type: string
+                address:
+                    type: string
+                cellphone_number:
+                    type: string
+                products_to_ship:
+                    type: array
+                    items:
+                        type: string
+            example:
+                order_id: order.id
+                address: calle falsa 123
+                cellphone_number: '3111111111'
+                products_to_ship:
+                    - product_id
+        UpdateShipmentSchema:
+            title: Root Type for UpdateShipmentSchema
+            description: ''
+            required:
+                - status
+            type: object
+            properties:
+                status:
+                    enum:
+                        - DELIVERED
+                        - SHIPPED
+                        - PENDING_SHIPPING
+                    type: string
+            example:
+                status: SHIPPED
+        UpdatePaymentSchema:
+            title: Root Type for UpdatePaymentSchema
+            description: ''
+            required:
+                - status
+            type: object
+            properties:
+                status:
+                    enum:
+                        - PENDING
+                        - SUCCESSFUL
+                        - FAILED
+                    type: string
+            example:
+                status: SUCCESSSFUL
     securitySchemes:
         httpBearer:
             scheme: bearer

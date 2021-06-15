@@ -51,17 +51,17 @@ class TestViews(TestCase):
         self.assertIn("results", response.data.keys())
         self.assertIsInstance(response.data.get("results"), Iterable)
 
-    def test_get_products_pagination_structure(self):
+    def test_get_orders_pagination_structure(self):
         response = self.client.get(self.ORDERS_API_URL, HTTP_AUTHORIZATION=f"Bearer {self.token}")
         self.check_asserts_pagination_structure(response=response)
 
-    def test_get_products_list(self):
+    def test_get_orders_list(self):
         mock_products = self.mock_random_orders(self.user)
         response = self.client.get(self.ORDERS_API_URL, HTTP_AUTHORIZATION=f"Bearer {self.token}")
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEqual(mock_products.__len__() + 1, response.data.get("count"))
 
-    def test_create_product(self):
+    def test_create_order(self):
         response = self.client.post(
             path=self.ORDERS_API_URL,
             HTTP_AUTHORIZATION=f"Bearer {self.token}"
@@ -69,7 +69,7 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("created_at", response.data)
 
-    def test_retrieve_product(self):
+    def test_retrieve_order(self):
         response = self.client.get(self.ORDER_DETAIL_API_URL, HTTP_AUTHORIZATION=f"Bearer {self.token}")
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEqual(str(self.order.id), response.data.get("id"))

@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import status
@@ -26,10 +27,9 @@ class ShipmentsAPIView(mixins.ListModelMixin,
     def post(self, request, *args, **kwargs):
         request_serializer = CreateShipmentRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
-        order_id = request_serializer.validated_data["order_id"]
-        products_to_ship_list = request_serializer.validated_data["products_to_ship"]
         serializer_data = {
-            "order": order_id,
+            "user": request.user.id,
+            "order": request_serializer.validated_data["order_id"],
             "status": PENDING,
             "address": request_serializer.validated_data["address"],
             "cellphone_number": request_serializer.validated_data["cellphone_number"]
@@ -39,14 +39,13 @@ class ShipmentsAPIView(mixins.ListModelMixin,
         shipment_serialized.save()
         shipment = shipment_serialized.instance
         try:
-            shipment.is_valid_order_to_shipped()
-            shipment.save_products_to_ship(products=products_to_ship_list)
+            with transaction.atomic():
+                shipment.is_valid_order_to_shipped()
+                shipment.save_products_to_ship(products=request_serializer.validated_data["products_to_ship"])
         except TypeError:
-            shipment.delete()
             return Response({"error": "The order status is not valid"},
                             status=status.HTTP_406_NOT_ACCEPTABLE)
         except Exception:
-            shipment.delete()
             return Response({"error": "There are product(s) that do(es) not exist in this order"},
                             status=status.HTTP_406_NOT_ACCEPTABLE)
         return Response(shipment_serialized.data, status=status.HTTP_201_CREATED)
