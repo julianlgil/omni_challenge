@@ -4,7 +4,7 @@ LABEL maintainer="Julian Gil <julianlgil@hotmail.com.com>" version="1.0.0"
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
-RUN pip install --no-cache-dir -r /requirements/local.txt \
+RUN pip install --no-cache-dir -r /requirements/base.txt \
     && rm -rf /requirements
 
 COPY ./compose/local/django/entrypoint /entrypoint
