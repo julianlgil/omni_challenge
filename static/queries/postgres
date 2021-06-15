@@ -1,0 +1,26 @@
+SELECT * FROM public.orders where status = 'DELIVERED' OR status = 'PENDING_SHIPPING'
+
+
+SELECT orders.id as "order_id",
+	orders.total_order_price,
+	orders.status as "order_status",
+	payments.amount as "payment_amount",
+	payments.status as "payment_status"
+	FROM public.orders
+	INNER JOIN public.payment_details ON payment_details.order_id = orders.id
+	INNER JOIN public.payments ON payments.id = payment_details.payment_id
+	WHERE payments.status = 'SUCCESSFUL'
+
+
+
+SELECT orders.id as "order_id",
+	orders.total_order_price,
+	orders.status as "order_status",
+	shipments.id as "shipment_id",
+	shipments.address,
+	shipments.cellphone_number,
+	shipments.status as "shipment_status"
+	FROM public.orders INNER JOIN public.shipments ON shipments.order_id = orders.id
+	INNER JOIN public.products_to_ship ON products_to_ship.shipment_id = shipments.id
+	WHERE shipments.status = 'DELIVERED'
+
